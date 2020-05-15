@@ -13,15 +13,14 @@ class TasksUtility {
     private static let key = "tasks"
     
     // archive
-    private static func archive(_ tasks: [[Task]]) -> NSData {
-        return NSKeyedArchiver.archivedData(withRootObject: tasks) as NSData
+    private static func archive(_ tasks: [[Task]]) -> Data? {
+        return try? NSKeyedArchiver.archivedData(withRootObject: tasks, requiringSecureCoding: false)
     }
     
     // fetch
     static func fetch() -> [[Task]]? {
         guard let unarchivedData = UserDefaults.standard.object(forKey: key) as? Data else { return nil }
-        
-        return NSKeyedUnarchiver.unarchiveObject(with: unarchivedData) as? [[Task]]
+        return try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(unarchivedData) as? [[Task]] ?? [[]]
     }
     
     // save
